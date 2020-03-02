@@ -3,14 +3,12 @@ using namespace std;
 
 #include "function.h"
 
-/* Node Definition:
- *
- * struct Node { 
- *    int data; 
- *    struct Node *next; 
- * };
- *
-*/
+/*Node Definition:
+	struct Node { 
+    	int data; 
+    	struct Node *next; 
+	};*/
+
 
 /*
  * Lab10 Part 1: Implement push and print functions for creating
@@ -29,8 +27,10 @@ Node* push(Node* head, int new_data) {
     *       linked list should be 4->3->2->1->NULL and head should
     *       point to 4.
    */
-
-   // Your implementation here
+	Node* newNode = new Node;
+	newNode->data=new_data;
+	newNode->next=head;
+	return newNode;
 
 }
 
@@ -45,6 +45,14 @@ void print(Node* head) {
    */
 
    // Your implementation here
+	if(head == nullptr){
+		cout << "NULL" << endl;
+		return;
+	}
+	else {
+		cout << head->data <<"->";
+		print(head->next);
+	}
 
 }
 
@@ -65,7 +73,12 @@ bool isEmpty(Node* head) {
    */
 
    // Your implementation here
-
+	if(head == nullptr){
+		return true;
+	}
+	else{
+		return false;
+	}
 }
 
 int size(Node* head) {
@@ -76,8 +89,12 @@ int size(Node* head) {
     * returns: size of stack. If empty, return 0
    */
 
-   // Your implementation here
-
+   	if(head == nullptr){
+   		return 0;
+   	}
+	else{
+		return 1+size(head->next);
+	}
 }
 
 int top(Node* head) {
@@ -91,7 +108,10 @@ int top(Node* head) {
    */
 
    // Your implementation here
-
+	if(isEmpty(head)){
+		return NULL;
+	}
+	return head->data;
 }
 
 Node* pop(Node* head) {
@@ -105,8 +125,13 @@ Node* pop(Node* head) {
     *       head pointing to 4, then after pop, stack should
     *       be 3->2->1->NULL with head pointing to 4
    */
-
-   // Your implementation here
+	if(isEmpty(head)){
+		return nullptr;
+	}
+	Node* newHead = head->next;
+	delete head;
+	return newHead;
+	
 
 }
 
@@ -124,6 +149,13 @@ Node* middle_element(Node* head) {
    */
 
    // Your implementation here
+	int i = 0;
+	Node* mid = head;
+	while(i<(size(head)/2)){
+		mid = mid->next;
+		i += 1;
+	}
+	return mid;
 
 }
 
@@ -141,5 +173,17 @@ Node* remove_middle_element(Node* head, Node* middle_node) {
    */
 
    // Your implementation here
+	int i = 0;
+	Node* mid = head;
+	Node* prev = nullptr;
+	while(i<(size(head)/2)){
+		prev = mid;
+		mid = mid->next;
+		i += 1;
+	}
+	prev->next = mid->next;
+	delete mid;
+	return head;
+	
 
 }
