@@ -10,8 +10,8 @@ int main(){
     Tree.insert (1);
     Tree.insert (4);
 
-    Tree.remove(3);
-    Tree.remove_right(3);
+    //Tree.remove(3);
+    Tree.remove_left(3);
 
 //    Tree.insert (6);
 //    Tree.insert (7);
@@ -23,12 +23,19 @@ int main(){
 
     std::cout << "Pre-order:" << std::endl; 
     Tree.preorder();
+	//this call the public preorder functions
+	//if the tree is empty it will print "empty tree"
+	//if the tree is not empty then it will (recursivly):
+		//print the current node
+		//then print the left subTree
+		//then print the Right subTree
+	
 
     std::cout << "Level-order:" << std::endl; 
     Tree.levelorder();
 
     std::cout << "max depth:" << Tree.max_depth() << std::endl; 
-    std::cout << "max depth:" << Tree.min_depth() << std::endl; 
+    std::cout << "min depth:" << Tree.min_depth() << std::endl; 
     std::cout << "diameter:" << Tree.diameter() << std::endl;
 
     Tree.LCA(5, 4);
@@ -39,7 +46,8 @@ int main(){
     std::random_device random_device;
     std::mt19937 random_engine(random_device());
     std::uniform_int_distribution<int> distribution(1, range);
-
+	//the maximum difference is one for an AVL tree since that is the perameter of an AVL tree
+	//the random tree maxes out its difference in depths at aobut 30
     for(int i=0 ; i < range; i++)
     {
         auto const r = distribution(random_engine);
@@ -68,7 +76,7 @@ int main(){
     {
         auto const r = distribution(random_engine);
         Tree1.remove(r);
-        Tree1.remove_right(r);
+        Tree1.remove_left(r);
     }
 
 

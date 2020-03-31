@@ -128,7 +128,7 @@ class BinarySearchTree
         if( isEmpty( ) )
             return 0;
         else
-            max_depth( root);
+            return max_depth( root);
     }
 
     int min_depth () const
@@ -136,7 +136,7 @@ class BinarySearchTree
         if( isEmpty( ) )
             return 0;
         else
-            min_depth( root);
+            return min_depth( root);
     }
 
     int diameter () const
@@ -144,7 +144,7 @@ class BinarySearchTree
         if( isEmpty( ) )
             return 0;
         else
-            diameter( root);
+            return diameter( root);
     }
 
     void levelorder ( ostream & out = cout ) const
@@ -207,6 +207,55 @@ class BinarySearchTree
         BinaryNode( Comparable && theElement, BinaryNode *lt, BinaryNode *rt )
           : element{ std::move( theElement ) }, left{ lt }, right{ rt } { }
     };
+	// uses the binary node like a node in a doubly linked list
+	// left is like prev and right is like next etc
+	/*struct Queue{
+		BinaryNode* head;
+		BinaryNode* tail;
+	}
+	void pushLeft(const Comparable &x, Queue q){
+		t = new BinaryNode;
+		t->left = nullptr;
+		t->right = nullptr;
+		if(q.head == nullptr){
+			q->head = t;
+			q->tail = t;
+		}
+		else{
+			t->right=q->head;
+			q->head=t;
+		}
+	}
+	void pushRight(const Comparable &x, Queue q){
+		t = new BinaryNode;
+		t->left = nullptr;
+		t->right = nullptr;
+		if(q.tail == nullptr){
+			q->head = t;
+			q->tail = t;
+		}
+		else{
+			t->left=q->tail;
+			q->tail=t;
+		}
+	}
+	BinaryNode* popLeft(Queue q){
+		if(q.head == nullptr){
+			return nullptr;
+		}
+		else{
+			BinaryNode* oldHead = q->head;
+			q->head=q->head->right
+			delete oldHead;
+			return newHead;
+		}
+		
+	}
+	BinaryNode* popRight(Queue q){
+		if(q.tail == nullptr){
+			return nullptr;
+		}
+	}*/
 
     BinaryNode *root;
 
@@ -281,7 +330,26 @@ class BinarySearchTree
      */
     void remove_left( const Comparable & x, BinaryNode * & t )
     {
-        // Remove below line after your implementation
+        if( t == nullptr ){
+            return;   // Item not found; do nothing
+		}
+        if( x < t->element ){
+            remove_left( x, t->left );
+		}
+        else if( t->element < x ){
+            remove( x, t->right );
+		}
+        else if( t->left != nullptr && t->right != nullptr ) // Two children
+        {
+            t->element = findMax( t->left )->element;
+            remove_left( t->element, t->left );
+        }
+        else
+        {
+            BinaryNode *oldNode = t;
+            t = ( t->right != nullptr ) ? t->right : t->left;
+            delete oldNode;
+        }
         return;
     }
 
@@ -360,6 +428,8 @@ class BinarySearchTree
     /**
      * Internal method to print a subtree rooted at t in sorted order.
      */
+	
+	//this is an inorder traversal
     void printTree( BinaryNode *t, ostream & out ) const
     {
         if( t != nullptr )
@@ -380,7 +450,12 @@ class BinarySearchTree
     void preorder ( BinaryNode *t, ostream & out ) const
     {
         // Remove below line after your implementation
-        return;
+        if( t != nullptr )
+        {
+			out << t->element << endl;
+            preorder( t->left, out );
+            preorder( t->right, out );
+        }
     }
 
     /**
@@ -388,10 +463,25 @@ class BinarySearchTree
      * Add the code in below function that will evaluate the 
      * maximum depth of the Binary tree and return the integer value.
      */
+	
+	//a tree of only a root is of depth=1
     int max_depth (BinaryNode *t ) const
-    {
-        // Remove below line after your implementation
-        return 0;
+    {	
+		int lans = 0;
+		int rans = 0;
+		if (t == nullptr){
+			return 0;
+		}
+		else{
+			lans = 1+max_depth(t->left);
+			rans = 1+max_depth(t->right);
+			if(lans >= rans){
+				return lans;
+			}
+			else{
+				return rans;
+			}
+		}
     }
 
     /**
@@ -399,10 +489,25 @@ class BinarySearchTree
      * Add the code in below function that will evaluate the 
      * minimum depth of the Binary tree and return the integer value.
      */
+	
+	//a tree of only a root is of depth=1
     int min_depth (BinaryNode *t ) const
     {
-        // Remove below line after your implementation
-        return 0;
+		int lans = 0;
+		int rans = 0;
+		if (t == nullptr){
+			return 0;
+		}
+		else{
+			lans = 1+min_depth(t->left);
+			rans = 1+min_depth(t->right);
+			if(lans <= rans){
+				return lans;
+			}
+			else{
+				return rans;
+			}
+		}
     }
 
     /**
@@ -410,10 +515,30 @@ class BinarySearchTree
      * Add the code in below function that will evaluate the 
      * diameter of the Binary tree and return the integer value.
      */
+	// a tree with only a root has diameter 1
+	// order n^2
     int diameter (BinaryNode *t ) const
     {
-        // Remove below line after your implementation
-        return 0;
+        if(t == nullptr){
+        	return 0;
+        }
+		else{
+			int lheight = max_depth(t->left); 
+			int rheight = max_depth(t->right); 
+			int ldiameter = diameter(t->left); 
+			int rdiameter = diameter(t->right);
+			int d = lheight+rheight+1;
+			if((d >= ldiameter) && (d >= rdiameter)){
+				return d;
+			}
+			else if((ldiameter >=d) && (ldiameter >= rdiameter)){
+				return ldiameter;
+			}
+			else{
+				return rdiameter;
+			}
+			
+		}
     }
 
     /**
@@ -439,7 +564,16 @@ class BinarySearchTree
      */
     void LCA(BinaryNode *t, int x, int y, ostream & out) const
     {
-        // Remove below line after your implementation
+		if(t != nullptr){
+       		if(t->element > x && t->element > y){
+       			LCA(t->left, x, y, out);
+       		}
+       		else if(t->element < x && t->element < y){
+       			LCA(t->right, x, y, out);
+       		}
+			out << t->element << endl;
+
+		}
         return;
     }
 
