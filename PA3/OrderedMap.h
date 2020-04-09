@@ -1,5 +1,7 @@
 #ifndef ORDERED_MAP_H
 #define ORDERED_MAP_H
+#include <string> //string functions
+#include <sstream> //to convert key into string
 
 using namespace std;       
 
@@ -105,9 +107,17 @@ class OrderedMap
      * Note: Return value of this function should be between 0 than MAP_MAX_SIZE - 1.
      */
     int hashFunction( const Key & key ) {
-        
-        // Remove below line after your implementation
-        return 0;
+        string str = "";
+		stringstream s;
+		s << key;
+		str = s.str();
+		
+       	int hash = 0;
+		for(int i = 0 ; i < str.size() ; ++i){
+			hash+=int(str[i]);
+		}
+		hash = hash % MAP_MAX_SIZE;
+        return hash;
     }
 
     /** Q 4.2
@@ -120,8 +130,43 @@ class OrderedMap
      */
     void insert( int hash_key, const Key & key, const Value & value, KeyNode* t )
     {
-        // Remove below line after your implementation
-        return;
+		if(t->hash_key == hash_key){
+			//create a new value node
+			ValueNode* val = new ValueNode(key, value, nullptr);
+			
+			ValueNode* curr = t->right;
+			while(curr->right!=nullptr){
+				curr=curr->right;
+			}
+			curr->right = val;
+		}
+        else if(t->down==nullptr){
+			//create a new valueNod
+			ValueNode* val = new ValueNode(key, value, nullptr);
+			
+        	//create a new keynode
+			KeyNode* keyN = new KeyNode(hash_key,val,nullptr);
+			//set t->down to the new keynode
+			t->down = keyN;
+        }
+		else if(hash_key > t->hash_key && hash_key < t->down->hash_key){
+			//create a new valuenode
+			ValueNode* val = new ValueNode(key, value, nullptr);
+			
+			
+			//create a new keynode
+			KeyNode* keyN = new KeyNode(hash_key,val,nullptr);
+			//set the new keynode->right to the new value node
+			
+			
+			//set new keynode->down to t->down
+			keyN->down = t->down;
+			//set t->down to the new keynode
+			t->down = keyN;
+		}
+		else{
+			insert(hash_key, key, value, t->down);
+		}
     }
 
 
