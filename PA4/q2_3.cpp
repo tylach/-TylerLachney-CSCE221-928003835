@@ -4,8 +4,14 @@
 using namespace std;
 
 int kthSmallest(int arr[], int n, int k) {
-    // Remove below line after your implementation
-    return 0;
+    MinHeap h(11);
+    for(unsigned int i = 0 ; i < n ; ++i){
+    	h.insertKey(arr[i]);
+    }
+	for(unsigned int j = 0 ; j < k-1 ; j++){
+		h.extractMin();
+	}
+    return h.getMin();
 }
 
 int main(){

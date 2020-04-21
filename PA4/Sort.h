@@ -386,32 +386,93 @@ void insertionSort( const RandomIterator & begin,
 /**
  * Q 1.c - Implement selection sort algorithm
  */
+//time complexity is bigO n^2
 template <typename Comparable>
 void selectionSort( vector<Comparable> & a )
 {
-    // Remove below line after your implementation
+	int lowestIndx = 0;
+	Comparable min;
+    for(unsigned int i = 0 ; i < a.size()-1 ; ++i){
+		min = a[i];
+    	for(unsigned int j = i+1 ; j < a.size() ; ++j){
+    		if(a[j] < min){
+    			min = a[j];
+				lowestIndx = j;
+    		}
+    	}
+		a[lowestIndx]=a[i];
+		a[i] = min;
+    }
     return;
 }
 
 /**
  * Q 1.b - Implement bubble sort algorithm
  */
+
+//time complexity is bigO n^2
 template <typename Comparable>
 void bubbleSort( vector<Comparable> & a )
 {
-    // Remove below line after your implementation
-    return;
+	Comparable temp;
+    for(unsigned int i = 0 ; i < a.size() ; ++i){
+		for(unsigned int j = 0 ; j < a.size()-1-i ; ++j){
+			if(a[j] > a[j+1]){
+				//swap
+				temp = a[j];
+				a[j] = a[j+1];
+				a[j+1] = temp;
+			}
+		}
+	}
 }
 
 /**
  * Q 1.a - Implement the isSorted function that will chceck if the
  * vector is sorted of not.
  */
+//sorted means lowest to greatest
+//time complexity is bigO n
 template <typename Comparable>
 bool isSorted( vector<Comparable> & a )
 {
-    // Remove below line after your implementation
-    return false;
+	if(a.size() == 1 || a.size() == 0){
+		return true;
+	}
+    for(unsigned int i = 1 ; i < a.size() ; ++i){
+    	if(a[i] < a[i-1]){
+    		return false;
+    	}
+    }
+    return true;
+}
+
+//my merge was created so that i can merge two seperate arrays
+//this seemed easier for me
+template <typename Comparable>
+vector<Comparable> myMerge(vector<Comparable> a, vector<Comparable> b){
+	vector<Comparable> ans;
+	int i = 0;
+	int j = 0;
+	while(i<a.size() && j<b.size()){
+		if(a[i] < b[j]){
+			ans.push_back(a[i]);
+			i++;
+		}
+		else{
+			ans.push_back(b[j]);
+			j++;
+		}
+	}
+	while(i<a.size()){
+		ans.push_back(a[i]);
+		i++;
+	}
+	while(j<b.size()){
+		ans.push_back(b[j]);
+		j++;
+	}
+	return ans;
 }
 
 /**
@@ -420,8 +481,40 @@ bool isSorted( vector<Comparable> & a )
 template <typename Comparable>
 void hybridSort( vector<Comparable> & a )
 {
-    // Remove below line after your implementation
-    return;
+    if(a.size() < 16){
+		bubbleSort(a);
+	}
+	else{
+		//split a into b, c, d, e
+		//sort b, c, d, and e using quickSort
+		//merge b and c, and d and e
+		//merge bc and de
+		vector<Comparable> b;
+		vector<Comparable> c;
+		vector<Comparable> d;
+		vector<Comparable> e;
+		for(unsigned int i = 0 ; i < a.size() ; ++i){
+			if(i < (a.size()/4)){
+				b.push_back(a[i]);
+			}
+			else if(i < (a.size()/2)){
+				c.push_back(a[i]);
+			}
+			else if(i < (a.size()/4)+(a.size()/2)){
+				d.push_back(a[i]);
+			}
+			else{
+				e.push_back(a[i]);
+			}	
+		}
+		quicksort(b);
+		quicksort(c);
+		quicksort(d);
+		quicksort(e);
+		vector<Comparable> bc = myMerge(b,c);
+		vector<Comparable> de = myMerge(d,e);
+		a = myMerge(bc,de);
+	}
 }
 
 
